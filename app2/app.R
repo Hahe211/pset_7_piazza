@@ -20,16 +20,15 @@ table <- read_rds("all_congress.rds") %>%
                              "Hispanic" = "Hispanic"
                             
   )) %>% 
-  distinct(district, rep_win, rep_adv, accuracy, race_eth) 
-  
-#MY ISSUE: - the graph doesn't responsd when I select different race/eth
+  distinct(rep_win,accuracy, race_eth) 
+#create groupings by race_eth within a district   
 
 
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
-      textInput("title", "Title", "Accuracy vs. Win by Race/Ethnicity"),
-      numericInput("size", "Point size", 1, 1),
+      textInput("title", "Title", "Republic Win Margin vs Polling Forecasting Accuracy filtered by Race/Ethnicity"),
+      numericInput("size", "Point size", 2, 2),
        checkboxInput("fit", "Add line of best fit", FALSE),
       radioButtons("colour", "Point colour",
                    choices = c("blue", "red", "green", "black")),
@@ -40,6 +39,8 @@ ui <- fluidPage(
                   selected = "White")
     ),
     mainPanel(
+        h3("Summary of Findings"),
+        h5("Using this tool you can explore how the relationship between Republican Win Margin and Polling Accuracy Varies based by race and ethnicity"),
       plotOutput("plot")
     )
   )
@@ -49,14 +50,17 @@ ui <- fluidPage(
 server <- function(input, output) {
   output$plot <- renderPlot({
     # Subset the table dataset by the chosen race_eths
-    table <- table %>% filter(race_eth == input$race_eth)
+     table <- table %>% filter(race_eth == input$race_eth)
     # table <- subset(table,
     #                race_eth %in% input$race_eth)
     
     
-    p <- ggplot(table, aes(rep_adv, accuracy)) +
+    p <- ggplot(table, aes(rep_win, accuracy)) +
       geom_point(size = input$size, col = input$colour) +
-      ggtitle(input$title)
+      ggtitle(input$title) +
+      xlab("Republic Win Margin")+ ylab("Polling Accuracy")+
+      theme_light() 
+    
     
      if (input$fit) {
        p <- p + geom_smooth(method = "lm")
