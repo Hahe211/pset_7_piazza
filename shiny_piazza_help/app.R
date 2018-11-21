@@ -7,8 +7,7 @@ library(reshape2)
 
 table <- read_rds("all_congress.rds") %>% 
   select(rep_win, rep_adv, accuracy, district) %>% 
-  distinct(district, rep_win, rep_adv, accuracy) %>% 
-  select(-district)
+  distinct(district, rep_win, rep_adv, accuracy) 
 
 
 
@@ -40,7 +39,7 @@ server <- function(input, output) {
   output$scatterPlot <- renderPlot({
     
     table <- table %>%
-      select(input$category, accuracy)
+      filter(input == input$category)
     
     table %>%
       ggplot(aes(x = input$category, y = accuracy)) +
