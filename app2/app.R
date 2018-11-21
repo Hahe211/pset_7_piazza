@@ -9,16 +9,24 @@ library(reshape2)
 #   select(rep_win, rep_adv, accuracy, district) %>% 
 #   distinct(district, state, rep_win, rep_adv, accuracy) %>% 
 #   select(-district)
-table <- read_rds("all_congress.rds")
-  
+
+table <- read_rds("all_congress.rds") %>% 
+  mutate(race_eth = fct_collapse(race_eth,
+                             "White" = "White",
+                              "Black" = "Black", 
+                              "Asian" = "Asian", 
+                               "Other" = "Other",
+                             "Hispanic" = "Hispanic"
+                            
+  )) 
 
 
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
-      textInput("title", "Title", "GDP vs life exp"),
+      textInput("title", "Title", "Accuracy vs. Win by Race/Ethnicity"),
       numericInput("size", "Point size", 1, 1),
-      # checkboxInput("fit", "Add line of best fit", FALSE),
+       checkboxInput("fit", "Add line of best fit", FALSE),
       radioButtons("colour", "Point colour",
                    choices = c("blue", "red", "green", "black")),
       # Add a race_eth dropdown selector
@@ -45,10 +53,10 @@ server <- function(input, output) {
       geom_point(size = input$size, col = input$colour) +
       #scale_x_log10() +
       ggtitle(input$title)
-    # 
-    # if (input$fit) {
-    #   p <- p + geom_smooth(method = "lm")
-    #}
+    
+     if (input$fit) {
+       p <- p + geom_smooth(method = "lm")
+    }
     p
   })
 }
