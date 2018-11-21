@@ -40,7 +40,7 @@ ui <- fluidPage(
     ),
     mainPanel(
         h3("Summary of Findings"),
-        h5("Using this tool you can explore how the relationship between Republican Win Margin and Polling Accuracy Varies based by race and ethnicity"),
+        h5("Using this tool you can explore how the relationship between Republican Win Margin and Polling Accuracy varies according to race and ethnicity"),
       plotOutput("plot")
     )
   )
@@ -59,7 +59,8 @@ server <- function(input, output) {
       geom_point(size = input$size, col = input$colour) +
       ggtitle(input$title) +
       xlab("Republic Win Margin")+ ylab("Polling Accuracy")+
-      theme_light() 
+      theme_light() +
+      theme(plot.title = element_text(lineheight=.8, face="bold"))
     
     
      if (input$fit) {
